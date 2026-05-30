@@ -14,12 +14,12 @@
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
+      "src": "./static/(.*)",
+      "dest": "./static/$1"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/static/images/logo.png"
+      "src": "./favicon.ico",
+      "dest": "./static/images/logo.png"
     },
     {
       "src": "/(.*)",
