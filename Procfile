@@ -1,0 +1,1 @@
+web: fenrir run app:app

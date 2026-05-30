@@ -255,4 +255,4 @@ async def release_notes_page():
 if __name__ == "__main__":
     logger.info("Starting Fenrir Web Documentation Portal...")
     # Bound to port 8088 as approved by the user
-    app.run(host="127.0.0.1", port=8088, workers=2, reload=True)
+    app.run(host="0.0.0.0", port=8088, workers=2, reload=False)
