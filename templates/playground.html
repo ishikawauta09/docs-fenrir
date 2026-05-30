@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Fenrir Interactive Playground - Test Live API Endpoints{% endblock %}
+
+{% block content %}
+<div class="playground-grid">
+    <aside class="playground-sidebar">
+        <h3 style="margin-bottom: 5px;">API Console</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Select a framework paradigm to fire requests against our running Fenrir backend.</p>
+        
+        <div class="paradigm-selector">
+            <button class="btn-paradigm active" data-paradigm="flask">
+                <span class="badge-dot badge-dot-flask"></span>
+                <span>Flask Context Local</span>
+            </button>
+            <button class="btn-paradigm" data-paradigm="fastapi">
+                <span class="badge-dot badge-dot-fastapi"></span>
+                <span>FastAPI Validations</span>
+            </button>
+            <button class="btn-paradigm" data-paradigm="falcon">
+                <span class="badge-dot badge-dot-falcon"></span>
+                <span>Falcon Class Views</span>
+            </button>
+            <button class="btn-paradigm" data-paradigm="websocket">
+                <span class="badge-dot badge-dot-flask" style="background: #a5b4fc; box-shadow: 0 0 8px #a5b4fc;"></span>
+                <span>Sanic WebSockets</span>
+            </button>
+            <button class="btn-paradigm" data-paradigm="sse">
+                <span class="badge-dot badge-dot-sanic"></span>
+                <span>Sanic SSE Streams</span>
+            </button>
+        </div>
+    </aside>
+
+    <section class="playground-console">
+        
+        <div id="flask-view" class="playground-view active">
+            <div class="view-header">
+                <h2>Flask-Style Context Locals</h2>
+                <p class="view-desc">Test imperatively fetching query arguments via thread/task-safe <code>request.args</code> context-locals.</p>
+            </div>
+            
+            <div class="console-split">
+                <div class="glass-panel console-panel" style="padding: 25px;">
+                    <span class="panel-title"><i class="fas fa-sliders-h"></i> Request Options</span>
+                    
+                    <div class="form-group">
+                        <label for="flaskName">Query Parameter (<code>name</code>)</label>
+                        <input type="text" id="flaskName" class="form-input" value="Fenrir Developer" placeholder="Type a name...">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="btnRunFlask" style="margin-top: 10px;">
+                        <i class="fas fa-paper-plane"></i> Send GET Request
+                    </button>
+                </div>
+                
+                <div class="console-panel">
+                    <span class="panel-title"><i class="fas fa-terminal"></i> ASGI Server Response</span>
+                    <div class="response-wrapper">
+                        <div class="response-header">
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">GET /api/flask/greet</span>
+                            <span class="response-status" id="flaskStatus">HTTP ---</span>
+                        </div>
+                        <pre class="response-body" id="flaskTerm" style="margin: 0; white-space: pre-wrap; font-family: var(--font-mono);">// Response will output here...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fastapi-view" class="playground-view">
+            <div class="view-header">
+                <h2>FastAPI-Style Validation & Dependency Injection</h2>
+                <p class="view-desc">Fire a POST request with automatic Pydantic v2 body schema validation and HTTP Header authorization.</p>
+            </div>
+            
+            <div class="console-split">
+                <div class="glass-panel console-panel" style="padding: 25px;">
+                    <span class="panel-title"><i class="fas fa-sliders-h"></i> Request Parameters</span>
+                    
+                    <div class="form-group">
+                        <label for="fastapiUsername">Username (Pydantic validated str)</label>
+                        <input type="text" id="fastapiUsername" class="form-input" value="wolf_developer">
+                    </div>
+                    <div class="form-group">
+                        <label for="fastapiEmail">Email (Pydantic validated str)</label>
+                        <input type="email" id="fastapiEmail" class="form-input" value="coder@fenrir.dev">
+                    </div>
+                    <div class="form-group">
+                        <label for="fastapiAge">Age (Pydantic validated int)</label>
+                        <input type="number" id="fastapiAge" class="form-input" value="26">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fastapiApiKey">Header Value (<code>X-API-Key</code> dependency)</label>
+                        <input type="text" id="fastapiApiKey" class="form-input form-input-mono" value="super-secret-key">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fastapiRole">Query Role Parameter (<code>role</code>)</label>
+                        <select id="fastapiRole" class="form-input">
+                            <option value="member">member (Default)</option>
+                            <option value="administrator">administrator</option>
+                            <option value="guest">guest</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="btnRunFastapi" style="margin-top: 10px;">
+                        <i class="fas fa-paper-plane"></i> Send Validated POST
+                    </button>
+                </div>
+                
+                <div class="console-panel">
+                    <span class="panel-title"><i class="fas fa-terminal"></i> ASGI Server Response</span>
+                    <div class="response-wrapper">
+                        <div class="response-header">
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">POST /api/register</span>
+                            <span class="response-status" id="fastapiStatus">HTTP ---</span>
+                        </div>
+                        <pre class="response-body" id="fastapiTerm" style="margin: 0; white-space: pre-wrap; font-family: var(--font-mono);">// Response will output here... Try putting an invalid email or age to see Pydantic validation errors!</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="falcon-view" class="playground-view">
+            <div class="view-header">
+                <h2>Falcon-Style Class-Based Resources</h2>
+                <p class="view-desc">Interact with a class instance mapping methods directly to HTTP verbs. Custom dynamic path parameters are converted automatically.</p>
+            </div>
+            
+            <div class="console-split">
+                <div class="glass-panel console-panel" style="padding: 25px;">
+                    <span class="panel-title"><i class="fas fa-sliders-h"></i> Resource Parameters</span>
+                    
+                    <div class="form-group">
+                        <label for="falconItemId">Dynamic Path Parameter (<code>item_id:int</code>)</label>
+                        <input type="number" id="falconItemId" class="form-input form-input-mono" value="789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="falconSubItem">POST Body Parameter (<code>sub_item</code>)</label>
+                        <input type="text" id="falconSubItem" class="form-input" value="Premium Glass Engine">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-primary" id="btnRunFalconGet" style="flex: 1;">
+                            <i class="fas fa-paper-plane"></i> Send GET
+                        </button>
+                        <button class="btn btn-secondary" id="btnRunFalconPost" style="flex: 1;">
+                            <i class="fas fa-plus"></i> Send POST
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="console-panel">
+                    <span class="panel-title"><i class="fas fa-terminal"></i> ASGI Server Response</span>
+                    <div class="response-wrapper">
+                        <div class="response-header">
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">/api/falcon/item/&lt;id&gt;</span>
+                            <span class="response-status" id="falconStatus">HTTP ---</span>
+                        </div>
+                        <pre class="response-body" id="falconTerm" style="margin: 0; white-space: pre-wrap; font-family: var(--font-mono);">// Response will output here...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="websocket-view" class="playground-view">
+            <div class="view-header">
+                <h2>Sanic-Style WebSockets Support</h2>
+                <p class="view-desc">Establish a persistent, bidirectional WebSocket channel to chat in real-time with the Fenrir event-loop.</p>
+            </div>
+            
+            <div class="console-split">
+                <div class="glass-panel console-panel" style="padding: 25px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="panel-title" style="margin-bottom: 15px;"><i class="fas fa-network-wired"></i> Channel Controller</span>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+                            Click "Connect" to open an ASGI WebSocket frame handshake at <code>/ws/chat</code>. You can then submit text strings, and the server will echo them back instantly.
+                        </p>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="btnConnectWs" style="width: 100%;">
+                        Connect WebSocket
+                    </button>
+                </div>
+                
+                <div class="console-panel">
+                    <span class="panel-title">
+                        <i class="fas fa-comments"></i> Real-time Chat Channel
+                    </span>
+                    <div class="response-wrapper" style="min-height: 380px;">
+                        <div class="response-header">
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">ws://127.0.0.1:8088/ws/chat</span>
+                            <span class="response-status" id="wsStatus">Disconnected</span>
+                        </div>
+                        <div class="response-body" style="display: flex; flex-direction: column; gap: 15px; background: #030712; padding: 15px; flex: 1;">
+                            <div class="chat-window" id="wsChatWindow" style="flex: 1; overflow-y: auto;">
+                                <div class="chat-msg chat-msg-server"><strong>System:</strong> Connection inactive. Click connect above to begin testing.</div>
+                            </div>
+                            
+                            <div class="chat-input-row" style="display: flex; gap: 10px;">
+                                <input type="text" id="wsInput" class="form-input" placeholder="Type message..." style="padding: 10px; flex: 1;">
+                                <button class="btn btn-primary" id="btnSendWs" style="padding: 10px 20px; border-radius: 8px;">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sse-view" class="playground-view">
+            <div class="view-header">
+                <h2>Server-Sent Events (SSE)</h2>
+                <p class="view-desc">Listen to a unidirectional HTTP event stream pushing real-time server metrics (active workers count & random state values) directly to the web client.</p>
+            </div>
+            
+            <div class="console-split">
+                <div class="glass-panel console-panel" style="padding: 25px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="panel-title" style="margin-bottom: 15px;"><i class="fas fa-wave-square"></i> Stream Controller</span>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+                            Establish a text-based <code>text/event-stream</code> connection to <code>/api/sse/events</code>. The server will stream live JSON telemetry ticks every second.
+                        </p>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="btnConnectSse" style="width: 100%;">
+                        Connect Stream
+                    </button>
+                </div>
+                
+                <div class="console-panel">
+                    <span class="panel-title">
+                        <i class="fas fa-chart-line"></i> Live Stream Feed
+                    </span>
+                    <div class="response-wrapper" style="min-height: 320px;">
+                        <div class="response-header">
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">EventSource /api/sse/events</span>
+                            <span class="response-status" id="sseStatus">Stopped</span>
+                        </div>
+                        <div class="sse-visualizer" id="sseVisualizer" style="overflow-y: auto; flex: 1; padding: 15px; background: #030712;">
+                            <div class="sse-tick" style="border: none;">
+                                <span class="sse-time">// Live stream telemetry ticks will appear here...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+{% endblock %}

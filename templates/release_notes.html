@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Fenrir Changelog - Project Version Release Notes{% endblock %}
+
+{% block content %}
+<style>
+    /* Mengoptimalkan interaktivitas elemen glassmorphic */
+    .release-timeline-item .glass-panel {
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .release-timeline-item:hover .glass-panel {
+        border-color: var(--border-hover);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    /* Perbaikan pemenggalan kata pada judul versi di layar mobile */
+    .version-title {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+</style>
+
+<div class="docs-container" style="max-width: 950px; margin: 0 auto; padding: 2rem 1rem;">
+    
+    <div style="margin-bottom: 3.5rem;">
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 10px; text-align: left;">Release Notes</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin: 0;">
+            Official historical changelog tracking core updates, bug patches, compatibility matrices, and development cycles of the Fenrir framework.
+        </p>
+    </div>
+
+    <div style="position: relative; border-left: 2px solid var(--border-color); padding-left: 2rem; margin-left: 1rem;">
+        
+        <div class="release-timeline-item" style="margin-bottom: 4rem; position: relative;">
+            <div style="position: absolute; width: 14px; height: 14px; background: var(--color-cyan); border-radius: 50%; left: calc(-2rem - 8px); top: 8px; box-shadow: 0 0 12px var(--color-cyan);"></div>
+            
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 1rem;">
+                <h2 class="version-title" style="font-size: 1.6rem; color: #fff; margin: 0; font-family: 'Outfit', sans-serif;">v1.2.1 — Packaging & Asset Integration Patch</h2>
+                <span style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap;"><span style="color: var(--color-emerald); font-weight: 600;">Latest Stable</span></span>
+            </div>
+            
+            <div class="glass-panel" style="padding: 1.75rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color);">
+                <p style="margin-top: 0; color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">Logo and favicon assets are now properly included in the package distribution:</p>
+                
+                <div style="margin-bottom: 1.25rem;">
+                    <span style="color: var(--color-amber); font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 4px;">Logo Asset Packaging Issue</span>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 8px 0; line-height: 1.6;">
+                        The <code>fenrir new</code> command failed to copy logo and favicon files when creating new projects outside the main repository environment.
+                    </p>
+                    <ul style="color: var(--text-secondary); padding-left: 1.25rem; margin: 0; line-height: 1.8; font-size: 0.95rem;">
+                        <li><strong>Root cause:</strong> Logo files (<code>logo.png</code>, <code>logo.jpg</code>) were stored in the repository root instead of within the active <code>fenrir/</code> package distribution directory, causing them to be left out during PyPI installation dependencies.</li>
+                        <li><strong>Fix:</strong> Moved <code>logo.png</code> and <code>logo.jpg</code> from the repository root directly into the <code>fenrir/</code> core package bundle.</li>
+                        <li><strong>Configuration:</strong> Appended <code>[tool.setuptools.package-data]</code> specifications within <code>pyproject.toml</code> to explicitly track images: <code>fenrir = ["logo.png", "logo.jpg"]</code>.</li>
+                        <li><strong>CLI Updates:</strong> Refactored the <code>cmd_new()</code> execution function inside <code>fenrir/cli.py</code> to fetch logos natively from the local package directory structure first, with standard automated fallbacks configured for active development modes.</li>
+                    </ul>
+                </div>
+                <p style="margin: 0; color: var(--color-emerald); font-weight: 600; font-size: 0.9rem; line-height: 1.5;">
+                    <i class="fas fa-check-circle"></i> Verification Status: All automation builds green (482 standard unit tests + 13 advanced tests passing). Scaffolding commands function seamlessly across all external operational environments.
+                </p>
+            </div>
+        </div>
+
+        <div class="release-timeline-item" style="margin-bottom: 4rem; position: relative;">
+            <div style="position: absolute; width: 14px; height: 14px; background: var(--border-active); border-radius: 50%; left: calc(-2rem - 8px); top: 8px;"></div>
+            
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 1rem;">
+                <h2 class="version-title" style="font-size: 1.6rem; color: #fff; margin: 0; font-family: 'Outfit', sans-serif;">v1.1.1 — Python 3.8–3.10 Full Compatibility Patch</h2>
+            </div>
+            
+            <div class="glass-panel" style="padding: 1.75rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color);">
+                <p style="margin-top: 0; color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">Five core validation anomalies on Legacy Python 3.8 CI runners have been resolved:</p>
+                
+                <ol style="color: var(--text-secondary); padding-left: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 1.25rem; font-size: 0.95rem; line-height: 1.6;">
+                    <li>
+                        <strong style="color: #fff;">RuntimeError: Working outside of request context</strong>
+                        <br><span style="color: var(--text-muted);">Context: Session and redirection access within synchronous request route pipelines.</span>
+                        <br><strong>Root cause:</strong> <code>loop.run_in_executor()</code> drops active <code>contextvars</code> propagation states by default. Handlers using global <code>session[...]</code> dictionary schemas or <code>redirect()</code> workflows lost state data when shifted onto background execution threads.
+                        <br><strong>Fix:</strong> Updated <code>fenrir/compat.py</code> to introduce an isolation polyfill that executes <code>contextvars.copy_context().run(func)</code> explicitly instead of piping the handler raw into the thread pool.
+                    </li>
+                    <li>
+                        <strong style="color: #fff;">AssertionError: {'user': None} != {'user': 'Alice'}</strong>
+                        <br><span style="color: var(--text-muted);">Context: Request dependency parsing targeting <code>Annotated[str, Header()]</code> structural definitions.</span>
+                        <br><strong>Root cause:</strong> The vanilla <code>typing.get_origin()</code> wrapper on older Python 3.8 releases evaluates <code>typing_extensions.Annotated[...]</code> layouts back as a <code>None</code> value type, rendering arguments invisible to structural dependency containers.
+                        <br><strong>Fix:</strong> Refactored <code>fenrir/compat.py</code> to natively export proxy hooks for <code>get_origin</code> and <code>get_args</code> out of <code>typing_extensions</code>. Updated downstream resolution pipelines inside <code>fenrir/dependencies.py</code> and <code>fenrir/openapi.py</code> to process definitions via this fallback layer.
+                    </li>
+                    <li>
+                        <strong style="color: #fff;">AssertionError: {'content_type': ''} != {'content_type': 'text/plain'}</strong>
+                        <br><span style="color: var(--text-muted);">Context: Multiform file parsing stream execution.</span>
+                        <br><strong>Root cause:</strong> Legacy <code>python-multipart &lt; 0.0.21</code> components mounted across older continuous integration runtime systems fail to inject <code>content_type</code> properties down to backend <code>File.__init__</code> initialization calls.
+                        <br><strong>Fix:</strong> Programmed a persistent fallback block inside <code>fenrir/request.py</code> that listens on the parser's <code>on_header_field</code>, <code>on_header_value</code>, and <code>on_headers_finished</code> callbacks to extract incoming part media-types before factory creation completes.
+                    </li>
+                    <li>
+                        <strong style="color: #fff;">AssertionError: 'target' == '/nested/target'</strong>
+                        <br><span style="color: var(--text-muted);">Context: Relative redirection string target evaluation anomalies.</span>
+                        <br><strong>Resolution:</strong> Mitigated as a downstream benefit of the <code>contextvars</code> thread-state fix, successfully preserving correct localized <code>request.path</code> records across parallel threadpools.
+                    </li>
+                    <li>
+                        <strong style="color: #fff;">CI Build Timeout Anomalies (Python 3.9 Matrix Environment)</strong>
+                        <br><strong>Detail:</strong> Addressed job termination blocks during deployment cycles. Investigations show processing constraints occurred while compiling dependencies like <code>gevent</code> on infrastructure setups. Classed as an architecture constraint requiring no modification to application codebases.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="release-timeline-item" style="margin-bottom: 4rem; position: relative;">
+            <div style="position: absolute; width: 14px; height: 14px; background: var(--border-active); border-radius: 50%; left: calc(-2rem - 8px); top: 8px;"></div>
+            
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 1rem;">
+                <h2 class="version-title" style="font-size: 1.6rem; color: #fff; margin: 0; font-family: 'Outfit', sans-serif;">v1.1.0 — CI/CD & Centering Fix</h2>
+            </div>
+            
+            <div class="glass-panel" style="padding: 1.5rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color);">
+                <ul style="color: var(--text-secondary); padding-left: 1.25rem; margin: 0; line-height: 1.8; font-size: 0.95rem;">
+                    <li><strong>Automated Testing Matrix:</strong> Integrated comprehensive **GitHub Actions** pipelines to enforce linting and check coverage variables across environments from Python 3.8 up to 3.13.</li>
+                    <li><strong>CLI Scaffold Polishing:</strong> Fixed centering alignment logic, geometry constraints, and layout boundaries for the <code>PROJECT CREATED SUCCESSFULLY</code> visual terminal emblem inside the project generator.</li>
+                    <li><strong>Protocol Enhancements:</strong> Achieved absolute <strong>RFC 7231 HEAD</strong> method compliance for structural pipeline operations.</li>
+                    <li><strong>Package Specifications:</strong> Registered <code>itsdangerous</code> and <code>python-multipart</code> explicitly into core setups as rigid backend architecture dependencies.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="release-timeline-item" style="position: relative;">
+            <div style="position: absolute; width: 14px; height: 14px; background: var(--text-muted); border-radius: 50%; left: calc(-2rem - 8px); top: 8px;"></div>
+            
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 1rem;">
+                <h2 class="version-title" style="font-size: 1.6rem; color: #fff; margin: 0; font-family: 'Outfit', sans-serif;">v0.1.0 — Initial Release (Alpha Genesis Core)</h2>
+            </div>
+            
+            <div class="glass-panel" style="padding: 1.5rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color);">
+                <ul style="color: var(--text-secondary); padding-left: 1.25rem; margin: 0; line-height: 1.8; font-size: 0.95rem;">
+                    <li><strong>Multi-Paradigm Hybrid Engine:</strong> Created a unified application layer tying together architectural components from Flask, FastAPI, Sanic, Falcon, and Bottle onto a single ASGI runtime event loop.</li>
+                    <li><strong>Stability Groundwork:</strong> Developed and verified 482 structured validation unit tests to secure framework engine loop boundaries.</li>
+                    <li><strong>Premium CLI Binaries:</strong> Distributed out-of-the-box development management kits (including <code>run</code>, <code>routes</code>, <code>shell</code>, <code>bench</code>, <code>new</code>, and <code>info</code>).</li>
+                    <li><strong>Schema Introspection:</strong> Provided automated generation mechanics producing live interactive OpenAPI/Swagger document hubs directly on startup.</li>
+                    <li><strong>Asynchronous Streaming:</strong> Full support for real-time channels using WebSockets and Server-Sent Events (SSE).</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

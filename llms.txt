@@ -1,0 +1,29 @@
+# Fenrir Web Framework
+
+Fenrir is a high-performance, hybrid Python web framework built on top of modern ASGI specifications. It elegantly merges the context-locals of Flask, automatic Pydantic validation of FastAPI, high-speed class views of Falcon, and async listeners/websockets of Sanic into a single unified event loop.
+
+## Core Paradigms
+
+- **Flask-Style**: Context-local requests (`from fenrir import request, g`).
+- **FastAPI-Style**: Pydantic type hinting for automatic request body validation.
+- **Falcon-Style**: Low-overhead Class-Based Resource Controllers (`on_get`, `on_post`).
+- **Sanic/ASGI-Style**: High-performance async event stream (SSE) and low-level WebSockets.
+
+## Quick Start
+
+```python
+from fenrir import Fenrir, request
+from pydantic import BaseModel
+
+app = Fenrir(title="Fenrir App")
+
+class User(BaseModel):
+    username: str
+
+@app.post("/user")
+async def create_user(body: User):
+    return {"status": "created", "data": body.model_dump()}
+
+@app.get("/")
+async def index():
+    return {"framework": "Fenrir", "speed": "Ultra High"}

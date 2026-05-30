@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}Fenrir Framework Documentation - Guides & API Reference{% endblock %}
+
+{% block body_class %}page-docs{% endblock %}
+
+{% block content %}
+<div class="docs-container">
+    <aside class="docs-sidebar">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="docsSearch" class="search-input" placeholder="Search topics...">
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-category">
+                <div class="nav-section-title">Getting Started</div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item active">
+                        <a href="#intro"><i class="fas fa-info-circle"></i> Introduction</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#installation"><i class="fas fa-download"></i> Installation & Setup</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-nav-category">
+                <div class="nav-section-title">Hybrid Paradigms</div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item">
+                        <a href="#fastapi"><i class="fas fa-shield-alt"></i> FastAPI (Validation)</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#flask"><i class="fas fa-flask"></i> Flask (Context & Jinja)</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#falcon"><i class="fas fa-feather"></i> Falcon (Class Views)</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#sanic"><i class="fas fa-wind"></i> Sanic (Tasks & Hooks)</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#bottle"><i class="fas fa-wine-glass-alt"></i> Bottle (WSGI Mounts)</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-nav-category">
+                <div class="nav-section-title">Reference</div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item">
+                        <a href="#cli"><i class="fas fa-terminal"></i> CLI Tooling</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <article class="docs-content">
+        
+        <section id="intro" class="doc-section active">
+            <h1>Introduction to Fenrir Framework</h1>
+            <p>
+                <strong>Fenrir</strong> is a state-of-the-art, high-performance, hybrid Python web framework built on top of modern ASGI specifications. It elegantly merges the best programming paradigms from Python's most popular web frameworks into a single unified workspace.
+            </p>
+            
+            <div class="alert-box alert-info">
+                <div class="alert-box-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="alert-box-content">
+                    <h5>Why Hybrid?</h5>
+                    <p>Instead of rewriting or separating your microservices into different paradigms, Fenrir allows you to leverage FastAPI validation, Flask context-locals, and Falcon resources simultaneously in the same event-loop.</p>
+                </div>
+            </div>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li><strong>⚡ High-Speed ASGI Core:</strong> Extremely low-overhead routing and handler pipeline, achieving massive request throughput.</li>
+                <li><strong>🧩 Framework Hybridization:</strong> Coexist Flask-style context-locals, FastAPI-style dependencies, Falcon-style class-based resources, and Sanic listeners.</li>
+                <li><strong>📖 Auto-Generated OpenAPI Docs:</strong> Interactive Swagger UI (at <code>/docs</code> or <code>/openapi-docs</code>) instantly generated from your Pydantic schemas.</li>
+                <li><strong>🔌 Modern Communications:</strong> Native WebSockets and Server-Sent Events (SSE) out of the box.</li>
+                <li><strong>🛠️ Premium CLI Tooling:</strong> Visual route tables, interactive shell, in-memory benchmarking suite, and scaffold creators.</li>
+            </ul>
+        </section>
+
+        <section id="installation" class="doc-section">
+            <h2>Installation & Setup</h2>
+            <p>
+                Fenrir requires <strong>Python 3.8+</strong>. Install the official release from PyPI:
+            </p>
+            
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-bash">pip install fenrir-framework</code></pre>
+            </div>
+            
+            <h3>Scaffolding a New Project</h3>
+            <p>
+                Fenrir comes packed with a robust scaffolding CLI to get you up and running with a cleanly structured layout instantly.
+            </p>
+            
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-bash"># Create a new scaffolded project
+fenrir new my_website
+cd my_website</code></pre>
+            </div>
+            
+            <h3>Serving the Application</h3>
+            <p>
+                You can run your app locally using the Asteri ASGI app server:
+            </p>
+            
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-bash"># Run with hot reloading on port 8088
+fenrir run app:app --port 8088 --dev</code></pre>
+            </div>
+        </section>
+
+        <section id="fastapi" class="doc-section">
+            <h2>FastAPI Paradigm (Validation & DI)</h2>
+            <p>
+                Fenrir native integration with <code>Pydantic v2</code> allows for dynamic, type-safe parameters, automated body parsing, and Dependency Injection patterns.
+            </p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li>Automatic request body deserialization and Pydantic schema validation.</li>
+                <li>Dependency injection with <code>Depends()</code> decorators.</li>
+                <li>Parameter resolution (<code>Query</code>, <code>Path</code>, <code>Header</code>, <code>Form</code>, <code>File</code>).</li>
+            </ul>
+
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-python">from pydantic import BaseModel
+from fenrir import Fenrir, Depends, Header
+
+app = Fenrir()
+
+class UserRegister(BaseModel):
+    username: str
+    email: str
+    age: int
+
+async def verify_token(x_api_key: str = Header(default=None)):
+    if x_api_key != "secret-token":
+        raise ValueError("Invalid credentials")
+    return x_api_key
+
+@app.post("/api/register")
+async def register(
+    body: UserRegister, 
+    token: str = Depends(verify_token)
+):
+    return {"status": "success", "user": body.model_dump(), "auth": token}</code></pre>
+            </div>
+        </section>
+
+        <section id="flask" class="doc-section">
+            <h2>Flask Paradigm (Context & Templating)</h2>
+            <p>
+                For rendering user interfaces or retrieving parameters imperatively, Fenrir provides thread/task-safe context locals and Jinja2 rendering.
+            </p>
+
+            <div class="alert-box alert-warning">
+                <div class="alert-box-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="alert-box-content">
+                    <h5>Context variables (Thread safe)</h5>
+                    <p>Fenrir uses contextvars to ensure <code>request</code>, <code>g</code>, and <code>session</code> are perfectly isolated across asynchronous operations, resolving legacy executor thread-safety bugs.</p>
+                </div>
+            </div>
+
+            <h3>Key Features</h3>
+            <ul>
+                <li>Context locals: <code>request</code>, <code>g</code>, <code>session</code>.</li>
+                <li>Jinja2 standard rendering using <code>render_template()</code>.</li>
+                <li>Flask-style exception handler hooks (<code>@app.exception(ValueError)</code>).</li>
+            </ul>
+
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-python">from fenrir import Fenrir, request, g, render_template
+
+app = Fenrir()
+
+@app.get("/welcome")
+async def welcome():
+    # Retrieve query params via global request context-local
+    name = request.args.get("name", "Guest")
+    # Share state across middleware/routes using request global g
+    g.visit_count = g.get("visit_count", 0) + 1
+    
+    return render_template("welcome.html", name=name, count=g.visit_count)</code></pre>
+            </div>
+        </section>
+
+        <section id="falcon" class="doc-section">
+            <h2>Falcon Paradigm (Class-Based Resources)</h2>
+            <p>
+                If you prefer class-based, REST-compliant designs with direct control over request and response objects, Fenrir supports Falcon-style resources.
+            </p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li>Class view methods mapping to HTTP verbs (<code>on_get</code>, <code>on_post</code>, <code>on_put</code>, <code>on_delete</code>).</li>
+                <li>Direct mutation of the response media: <code>resp.media = {...}</code>.</li>
+                <li>Lightweight routing mapping: <code>app.add_route("/path", Resource())</code>.</li>
+            </ul>
+
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-python">from fenrir import Fenrir
+
+app = Fenrir()
+
+class ItemResource:
+    async def on_get(self, req, resp, item_id: int):
+        resp.status = 200
+        resp.media = {
+            "item_id": item_id,
+            "msg": "Fetched via Falcon Class-Based view!"
+        }
+
+    async def on_post(self, req, resp, item_id: int):
+        data = req.json
+        resp.status = 201
+        resp.media = {
+            "item_id": item_id,
+            "received": data
+        }
+
+app.add_route("/items/&lt;item_id:int&gt;", ItemResource())</code></pre>
+            </div>
+        </section>
+
+        <section id="sanic" class="doc-section">
+            <h2>Sanic Paradigm (Tasks, Listeners & Hooks)</h2>
+            <p>
+                Manage lifecycle actions and run concurrent async tasks in the background using Sanic-style event scheduling.
+            </p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li>Lifecycle listeners: <code>before_server_start</code>, <code>after_server_stop</code>.</li>
+                <li>Global middleware hooks: <code>@app.middleware("request")</code> and <code>@app.middleware("response")</code>.</li>
+                <li>Non-blocking background loop runner: <code>app.add_task()</code>.</li>
+            </ul>
+
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-python">import asyncio
+from fenrir import Fenrir
+
+app = Fenrir()
+
+@app.listener("before_server_start")
+async def setup_db_pool(app_inst):
+    print("Database connection initiated!")
+
+async def background_poller():
+    while True:
+        print("Polling metrics...")
+        await asyncio.sleep(60)
+
+@app.listener("after_server_start")
+async def run_poller(app_inst):
+    # Register background coroutine
+    app_inst.add_task(background_poller())</code></pre>
+            </div>
+        </section>
+
+        <section id="bottle" class="doc-section">
+            <h2>Bottle Paradigm (WSGI mounting)</h2>
+            <p>
+                Run older legacy applications synchronously inside the high-speed ASGI event loop with Bottle-style legacy mounting adapters.
+            </p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li>Mount legacy synchronous WSGI apps seamlessly: <code>app.mount_wsgi(wsgi_app, prefix="/legacy")</code>.</li>
+                <li>Standard redirection helper: <code>redirect(location)</code>.</li>
+                <li>Send assets: <code>send_file(path_or_file)</code> and directory secure reader <code>send_from_directory(dir, path)</code>.</li>
+            </ul>
+
+            <div class="code-container">
+                <button class="btn-code-copy"><i class="far fa-copy"></i> Copy</button>
+                <pre><code class="language-python">from fenrir import Fenrir, redirect
+from legacy_app import flask_wsgi_app # WSGI app
+
+app = Fenrir()
+
+# Mount the Flask WSGI app onto ASGI routing
+app.mount_wsgi(flask_wsgi_app, prefix="/legacy")
+
+@app.get("/old-docs")
+async def old_docs():
+    # Legacy bottle-style redirection
+    return redirect("/docs")</code></pre>
+            </div>
+        </section>
+
+        <section id="cli" class="doc-section">
+            <h2>CLI Command Reference</h2>
+            <p>
+                Fenrir includes a visual, rich command-line tool. Execute <code>fenrir</code> or <code>python -m fenrir.cli</code> inside your shell.
+            </p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>fenrir run</code></td>
+                        <td>Serve application using Asteri v2.2.2 ASGI with reload/multiprocess</td>
+                        <td><code>fenrir run app:app --port 8088 --dev</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fenrir routes</code></td>
+                        <td>Visual colorized structural table of registered HTTP and WS paths</td>
+                        <td><code>fenrir routes app:app</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fenrir shell</code></td>
+                        <td>Spawns an interactive REPL with loaded application state</td>
+                        <td><code>fenrir shell app:app</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fenrir bench</code></td>
+                        <td>Runs zero-network HTTPX benchmarks directly over the ASGI pipeline</td>
+                        <td><code>fenrir bench app:app -i 1000 -p /</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fenrir new</code></td>
+                        <td>Scaffolds a cleanly organized responsive web project directory</td>
+                        <td><code>fenrir new project_name</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>fenrir info</code></td>
+                        <td>Inspects active environment, engine modules and route statistics</td>
+                        <td><code>fenrir info app:app</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </article>
+</div>
+{% endblock %}
