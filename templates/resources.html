@@ -18,12 +18,14 @@
 
     /* Pembungkus luar tabel untuk memotong sudut melengkung */
     .table-container {
-        overflow: hidden !important;
+        overflow-x: auto !important; /* Paksa aktifkan scroll horizontal untuk mobile */
+        overflow-y: hidden !important; /* Kunci sumbu vertikal agar tidak melar ke bawah */
         width: 100%; 
         background: rgba(0, 0, 0, 0.2); 
         border-radius: 8px; 
         border: 1px solid var(--border-color); 
         margin-bottom: 2rem;
+        -webkit-overflow-scrolling: touch; /* Bikin scrolling di iPhone/iOS jadi super mulus (smooth) */
     }
 
     /* MEMAKSA RE-RENDER TABEL MURNI (MENJINAKKAN MAIN.CSS) */

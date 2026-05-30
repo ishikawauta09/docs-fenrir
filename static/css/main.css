@@ -238,8 +238,8 @@ header {
 }
 
 .brand-logo {
-    width: 32px;
-    height: 32px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
     filter: drop-shadow(0 0 6px var(--color-cyan));
     animation: pulseLogo 3s ease-in-out infinite alternate;
@@ -320,8 +320,8 @@ header {
 }
 
 .hero-logo {
-    width: 160px;
-    height: 160px;
+    width: 260px;
+    height: 260px;
     object-fit: contain;
     filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.45));
 }
@@ -1440,8 +1440,8 @@ footer a {
     }
 
     .hero-logo {
-        width: 120px;
-        height: 120px;
+        width: 160px;
+        height: 160px;
     }
 
     .brand {
