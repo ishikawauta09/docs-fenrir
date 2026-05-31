@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found | Fenrir Framework{% endblock %}
+
+{% block content %}
+<div class="error-page-container" style="max-width: 800px; margin: 100px auto; padding: 40px; text-align: center; background: rgba(13, 20, 38, 0.45); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; backdrop-filter: blur(10px);">
+    <div class="error-code-badge" style="display: inline-block; padding: 8px 20px; background: rgba(244, 63, 94, 0.1); border: 1px solid #f43f5e; color: #f43f5e; border-radius: 30px; font-weight: bold; font-size: 1.1rem; margin-bottom: 25px; font-family: monospace;">
+        <i class="fas fa-exclamation-triangle"></i> ERROR CODE: 404
+    </div>
+    
+    <h1 style="font-size: 2.8rem; color: #f3f4f6; margin-bottom: 15px; font-weight: 800; background: linear-gradient(135deg, #f3f4f6 0%, #9ca3af 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        Lost In The Wild?
+    </h1>
+    
+    <p style="font-size: 1.1rem; color: #9ca3af; line-height: 1.7; margin-bottom: 35px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        The resource or endpoint path you are searching for could not be resolved by Fenrir's ASGI routing tree. It might have been moved, deleted, or never existed in the first place.
+    </p>
+
+    <div class="code-container" style="position: relative; margin-bottom: 35px;">
+        <button class="btn-code-copy" style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;"><i class="far fa-copy"></i> Copy</button>
+        <table class="error-details-table" style="width: 100%; text-align: left; border-collapse: collapse; background: rgba(0,0,0,0.2); border-radius: 6px; overflow: hidden;">
+            <thead>
+                <tr style="background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <th style="padding: 12px;">Parameter</th>
+                    <th style="padding: 12px;">Value / State</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 12px; font-family: monospace; color: #6366f1;">HTTP_STATUS</td>
+                    <td style="padding: 12px; font-family: monospace; color: #f43f5e;">404_NOT_FOUND</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; font-family: monospace; color: #6366f1;">ROUTER_STATE</td>
+                    <td style="padding: 12px; font-family: monospace; color: #9ca3af;">NO_MATCHING_ROUTE_NODE</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="error-actions" style="display: flex; gap: 15px; justify-content: center;">
+        <a href="/" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.2s ease;">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="/documentation" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: rgba(255, 255, 255, 0.03); color: #f3f4f6; text-decoration: none; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08); font-weight: 600; transition: all 0.2s ease;">
+            <i class="fas fa-book"></i> Read Docs
+        </a>
+    </div>
+</div>
+{% endblock %}

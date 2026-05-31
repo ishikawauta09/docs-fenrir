@@ -15,7 +15,8 @@ from fenrir import (
     render_template,
     Response,
     WebSocket,
-    WebSocketDisconnect
+    WebSocketDisconnect,
+    HTTPException
 )
 from fenrir.helpers import send_file, send_from_directory
 from fenrir.response import JSONResponse, StreamingResponse
@@ -248,6 +249,31 @@ async def resources_page():
 async def release_notes_page():
     """Renders structural project lifecycle version logs."""
     return render_template("release_notes.html", active_page="release_notes")
+
+# =====================================================================
+# GLOBAL ERROR CUSTOM ROUTE HANDLERS (404 & 500)
+# =====================================================================
+
+@app.exception(404)
+async def handle_404_error(req, exc):
+    """
+    Global Interceptor for 404 Not Found states.
+    Triggers when a requested routing path or static resource does not exist.
+    """
+    logger.warning(f"404 Error encountered at path: {request.path}")
+    # Render the custom 404 HTML template and return explicit 404 status code
+    return render_template("404.html", active_page="error"), 404
+
+
+@app.exception(500)
+async def handle_500_error(req, exc):
+    """
+    Global Fallback Interceptor for 500 Internal Server Errors.
+    Prevents raw Python stack traces from leaking sensitive runtime details to users.
+    """
+    logger.error(f"Fatal 500 Internal Server Error: {str(exc)}", exc_info=True)
+    # Render the custom 500 HTML template and return explicit 500 status code
+    return render_template("500.html", active_page="error"), 500
 
 # =====================================================================
 # 4. PROGRAMMATIC SERVER RUNNER
