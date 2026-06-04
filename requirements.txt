@@ -1,5 +1,0 @@
-fenrir-framework==1.2.1
-pydantic>=2.0.0
-Jinja2>=3.0.0
-mangum==0.15.0
-httpx>=0.23.0
