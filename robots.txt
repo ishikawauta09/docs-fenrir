@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/sse/events
-Disallow: /api/playground/eval
-
-Sitemap: https://fenrir.eksashop.web.id/sitemap.xml
