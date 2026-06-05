@@ -205,8 +205,11 @@ if (contentArea && scrollToTopBtn) {
     });
 }
 
-// Theme Toggle
+// Theme Toggle & Dropdown Menu
 const themeToggle = document.getElementById('themeToggle');
+const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+const moreMenuBtn = document.getElementById('moreMenuBtn');
+const moreMenuDropdown = document.getElementById('moreMenuDropdown');
 const htmlEl = document.documentElement;
 const themeIcon = document.getElementById('themeIcon');
 const themeText = document.getElementById('themeText');
@@ -216,28 +219,168 @@ const currentTheme = localStorage.getItem('theme') || 'light';
 htmlEl.className = currentTheme;
 updateThemeUI(currentTheme);
 
+const toggleTheme = () => {
+    const activeTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
+    htmlEl.className = activeTheme;
+    localStorage.setItem('theme', activeTheme);
+    updateThemeUI(activeTheme);
+    
+    // Auto-hide the dropdown menu on action
+    if (moreMenuDropdown) {
+        moreMenuDropdown.classList.add('hidden');
+    }
+};
+
 if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        const activeTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
-        htmlEl.className = activeTheme;
-        localStorage.setItem('theme', activeTheme);
-        updateThemeUI(activeTheme);
+    themeToggle.addEventListener('click', toggleTheme);
+}
+
+if (mobileThemeToggle) {
+    mobileThemeToggle.addEventListener('click', toggleTheme);
+}
+
+// Robust Clipboard Copy Helper
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.top = "0";
+                textArea.style.left = "0";
+                textArea.style.position = "fixed";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (successful) {
+                    resolve();
+                } else {
+                    reject(new Error("execCommand failed"));
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+}
+
+// Elegant Toast Helper
+function showToast(message) {
+    let toast = document.getElementById('toastNotification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toastNotification';
+        toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-neutral-900 dark:bg-neutral-200 text-white dark:text-neutral-900 px-4 py-2 rounded-lg shadow-xl z-[2000] text-xs font-medium transition-all duration-300 opacity-0 translate-y-2 pointer-events-none';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.offsetHeight; // trigger reflow
+    toast.classList.remove('opacity-0', 'translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    
+    setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2');
+    }, 2000);
+}
+
+// Share Handler Function
+function triggerShare() {
+    if (navigator.share) {
+        navigator.share({
+            title: document.title,
+            url: window.location.href
+        }).catch(err => {
+            console.error("Error sharing:", err);
+        });
+    } else {
+        // Clipboard Fallback
+        copyToClipboard(window.location.href).then(() => {
+            showToast("Link copied to clipboard!");
+        }).catch(err => {
+            console.error("Failed to copy link:", err);
+        });
+    }
+}
+
+// Share Functionality (using Event Delegation to capture click targets on SVG/path elements)
+document.addEventListener('click', (e) => {
+    if (e.target.closest('#shareBtn')) {
+        triggerShare();
+    }
+});
+
+// Toggle moreMenuDropdown (mobile) or rightSidebar (desktop)
+const rightSidebar = document.getElementById('rightSidebar');
+if (moreMenuBtn) {
+    moreMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.innerWidth < 768) {
+            if (moreMenuDropdown) {
+                moreMenuDropdown.classList.toggle('hidden');
+            }
+        } else {
+            if (rightSidebar) {
+                rightSidebar.classList.toggle('collapsed');
+            }
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (moreMenuDropdown && !moreMenuBtn.contains(e.target) && !moreMenuDropdown.contains(e.target)) {
+            moreMenuDropdown.classList.add('hidden');
+        }
     });
 }
 
+// Keyboard Shortcuts for Share (S) and More / Right Sidebar (M)
+document.addEventListener('keydown', (e) => {
+    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    if (e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        triggerShare();
+    } else if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        const moreMenuBtn = document.getElementById('moreMenuBtn');
+        if (moreMenuBtn) moreMenuBtn.click();
+    }
+});
+
 function updateThemeUI(theme) {
+    const mobileThemeIcon = document.getElementById('mobileThemeIcon');
+    const mobileThemeText = document.getElementById('mobileThemeText');
+
     if (theme === 'dark') {
         if (themeIcon) {
             themeIcon.setAttribute('data-lucide', 'moon');
             themeIcon.classList.add('text-yellow-300');
         }
         if (themeText) themeText.textContent = 'Dark Mode';
+
+        if (mobileThemeIcon) {
+            mobileThemeIcon.setAttribute('data-lucide', 'moon');
+            mobileThemeIcon.classList.add('text-yellow-300');
+        }
+        if (mobileThemeText) mobileThemeText.textContent = 'Dark Mode';
     } else {
         if (themeIcon) {
             themeIcon.setAttribute('data-lucide', 'sun');
             themeIcon.classList.remove('text-yellow-300');
         }
         if (themeText) themeText.textContent = 'Light Mode';
+
+        if (mobileThemeIcon) {
+            mobileThemeIcon.setAttribute('data-lucide', 'sun');
+            mobileThemeIcon.classList.remove('text-yellow-300');
+        }
+        if (mobileThemeText) mobileThemeText.textContent = 'Light Mode';
     }
     if (window.lucide) lucide.createIcons();
 }

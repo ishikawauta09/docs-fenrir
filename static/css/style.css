@@ -273,6 +273,9 @@ a {
     padding: 0.2rem 0.4rem; 
     border-radius: 4px; 
     font-size: 0.9em; 
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .prose pre { 
@@ -290,6 +293,9 @@ a {
     border-radius: 0;
     color: inherit;
     font-size: inherit;
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: pre;
 }
 
 .prose blockquote { 
@@ -423,6 +429,10 @@ a {
     font-size: 12px;
     overflow-y: auto;
     color: var(--text-main);
+}
+
+.right-sidebar.collapsed {
+    display: none !important;
 }
 
 .right-sidebar .toc {
@@ -718,10 +728,15 @@ a {
         left: 0;
         z-index: 1000;
         height: 100vh;
+        height: 100dvh;
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
         transform: translateX(0);
         width: 280px;
         background-color: var(--bg-sidebar);
+    }
+
+    .sidebar .flex-1.overflow-y-auto {
+        padding-bottom: 80px;
     }
 
     .sidebar.collapsed {
@@ -757,10 +772,6 @@ a {
 
     .status-bar {
         display: none !important;
-    }
-
-    .announcement-bar {
-        display: none;
     }
     
     .sidebar-overlay {

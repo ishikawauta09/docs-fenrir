@@ -190,8 +190,21 @@
                     <span class="text-gray-700 dark:text-gray-300">{% if current_id %}{{ current_id }}.md{% else %}404.md{% endif %}</span>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <i data-lucide="split" class="w-4 h-4 cursor-pointer hover:text-gray-700 dark:hover:text-white"></i>
-                    <i data-lucide="more-horizontal" class="w-4 h-4 cursor-pointer hover:text-gray-700 dark:hover:text-white"></i>
+                    <i id="shareBtn" data-lucide="share-2" class="w-4 h-4 cursor-pointer hover:text-gray-700 dark:hover:text-white" title="Share (S)"></i>
+                    <div class="relative inline-block text-left">
+                        <button id="moreMenuBtn" class="flex items-center hover:text-gray-700 dark:hover:text-white focus:outline-none" title="More / Toggle Right Sidebar (M)">
+                            <i data-lucide="more-horizontal" class="w-4 h-4 cursor-pointer"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="moreMenuDropdown" class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white dark:bg-[#252526] border border-gray-200 dark:border-gray-700 hidden z-[150] md:hidden">
+                            <div class="py-1">
+                                <button id="mobileThemeToggle" class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 flex items-center focus:outline-none">
+                                    <i data-lucide="sun" class="w-3.5 h-3.5 mr-2" id="mobileThemeIcon"></i>
+                                    <span id="mobileThemeText">Light Mode</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -243,7 +256,7 @@
                 </div>
 
                 <!-- Right Sidebar (TOC) -->
-                <aside class="right-sidebar hidden xl:block">
+                <aside id="rightSidebar" class="right-sidebar hidden xl:block">
                     <div class="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-4 border-b border-gray-200 dark:border-gray-800 pb-2">On this page</div>
                     <div class="toc text-gray-600 dark:text-gray-400">
                         {{ toc | safe }}
@@ -287,7 +300,7 @@
     </div>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" class="scroll-to-top hidden" title="Back to Top">
+    <button id="scrollToTop" class="scroll-to-top hidden" title="Back to Top (T)">
         <i data-lucide="arrow-up" class="w-5 h-5"></i>
     </button>
 
