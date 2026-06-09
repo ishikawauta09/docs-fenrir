@@ -18,6 +18,30 @@ async def websocket_echo(websocket: WebSocket):
         print("Client disconnected")
 ```
 
+### WebSocket with Timeout
+
+Set a per-route timeout to disconnect idle clients:
+
+```python
+from fenrir import WebSocket, WebSocketDisconnect, WebSocketTimeout
+
+@app.websocket("/ws/echo", timeout=30.0)
+async def websocket_echo(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Echo: {data}")
+    except WebSocketTimeout:
+        print("Client timed out")
+        await websocket.close(code=1000, reason="Timeout")
+    except WebSocketDisconnect:
+        print("Client disconnected")
+```
+
+**Parameters:**
+- `timeout`: Time in seconds to wait for a message before raising `WebSocketTimeout`
+
 ### WebSocket Chat Application
 
 ```python

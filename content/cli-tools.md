@@ -59,7 +59,7 @@ Example output:
 =============================================
 SYSTEM ENVIRONMENT
 =============================================
-Fenrir version:      1.2.2
+Fenrir version:      2.2.2
 Python version:      3.11.0
 Python executable:   /usr/bin/python3
 OS Platform:         Linux 6.1.0
@@ -69,7 +69,7 @@ Asteri installed:    Yes (v2.2.2)
 APPLICATION DETAILS
 =============================================
 App Title:           My App
-App Version:         1.2.2
+App Version:         2.2.2
 HTTP Routes:         10
 WebSocket Routes:    2
 Middlewares:         1

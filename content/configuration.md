@@ -7,7 +7,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="1.0.0",
+    version="2.2.2",
     description="An amazing application",
     docs_url="/docs",
     redoc_url="/redoc",

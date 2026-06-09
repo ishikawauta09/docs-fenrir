@@ -20,16 +20,19 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Jinja2 Templating: /docs/templating - Rendering HTML templates.
 - Error Handling: /docs/error-handling - Handling status codes and custom exceptions.
 - Error Handling Compatibility: /docs/error-handling-compatibility - Multi-style error handling compatibility.
-- Middleware: /docs/middleware - Request and response middleware.
+- Middleware: /docs/middleware - Request and response middleware hooks.
+- Middleware Classes: /docs/middleware-classes - CORS, GZip, RequestID, RateLimit middleware.
+- Sessions: /docs/sessions - Secure cookie, in-memory, and Redis session backends.
+- Pagination: /docs/pagination - Paginated list responses.
 - Background Tasks: /docs/background-tasks - Running background workers.
-- Authentication & Security: /docs/authentication-security - API keys, JWT, Bearer tokens, OAuth2.
+- Authentication & Security: /docs/authentication-security - API keys, JWT, Bearer tokens, OAuth2, OpenID Connect.
 - Blueprints: /docs/blueprints - Routing modularization.
 - Configuration: /docs/configuration - App settings and environment variables.
 - Testing Guide: /docs/testing - Writing test cases with pytest and TestClient.
 - CLI Tools Reference: /docs/cli-tools - Run, inspect, and benchmark commands.
-- Advanced Features: /docs/advanced-features - WSGI mounting and compat modes.
+- Advanced Features: /docs/advanced-features - WSGI mounting, compat modes, multiple response models.
 - Best Practices: /docs/best-practices - Performance, security, type hints.
-- Conclusion: /docs/conclusion - Closing notes.
+- Conclusion: /docs/conclusion - Closing notes and changelog.
 
 ## Technical Specifications
 - Support for FastAPI-style decorators and Pydantic validation.
@@ -37,4 +40,8 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Falcon-style class-based resources and before/after hooks.
 - Sanic-style listener hooks, background tasks, and handlers.
 - Full WSGI application mounting support.
+- Built-in CORS, GZip, RequestID, and RateLimit ASGI middleware.
+- Session backends: secure cookies, in-memory, Redis.
+- Pagination utilities for list endpoints.
+- WebSocket per-route timeout support.
 - Powered by high-speed Asteri ASGI server.

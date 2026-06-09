@@ -3,7 +3,7 @@ import datetime
 import re
 from fenrir import Fenrir, render_template, request, g, JSONResponse, HTTPNotFound, Response, send_from_directory
 
-app = Fenrir(title="Fenrir Docs", version="1.2.2")
+app = Fenrir(title="Fenrir Docs", version="2.2.2")
 
 # Configuration
 CONTENT_DIR = os.path.join(os.path.dirname(__file__), 'content')
@@ -28,6 +28,9 @@ SIDEBAR = [
     {'title': 'Error Handling & Exceptions', 'id': 'error-handling', 'icon': 'alert-circle'},
     {'title': 'Error Handling Compatibility', 'id': 'error-handling-compatibility', 'icon': 'shuffle'},
     {'title': 'Middleware System', 'id': 'middleware', 'icon': 'cpu'},
+    {'title': 'Middleware Classes', 'id': 'middleware-classes', 'icon': 'layers'},
+    {'title': 'Sessions', 'id': 'sessions', 'icon': 'database'},
+    {'title': 'Pagination', 'id': 'pagination', 'icon': 'list'},
     {'title': 'Background Tasks', 'id': 'background-tasks', 'icon': 'clock'},
     {'title': 'Authentication & Security', 'id': 'authentication-security', 'icon': 'shield'},
     {'title': 'Blueprints Organization', 'id': 'blueprints', 'icon': 'map'},
@@ -96,6 +99,7 @@ async def doc(doc_id: str):
     current_page = SIDEBAR[current_index] if current_index != -1 else None
     host = request.host or request.headers.get('host', 'localhost')
     canonical_url = f"https://{host}{request.path}"
+    base_url = f"https://{host}"
     
     return render_template('index.html', 
                            content=content_html, 
@@ -106,7 +110,8 @@ async def doc(doc_id: str):
                            prev_page=prev_page,
                            next_page=next_page,
                            last_updated=last_updated,
-                           canonical_url=canonical_url)
+                           canonical_url=canonical_url,
+                           base_url=base_url)
 
 @app.get('/api/search')
 async def search():
@@ -142,11 +147,13 @@ async def search():
 async def page_not_found(req, exc):
     host = request.host or request.headers.get('host', 'localhost')
     canonical_url = f"https://{host}{request.path}"
+    base_url = f"https://{host}"
     return render_template('index.html', 
                            content="<h1>404 - Page Not Found</h1><p>The documentation you are looking for does not exist.</p>", 
                            sidebar=SIDEBAR, 
                            current_id=None,
-                           canonical_url=canonical_url), 404
+                           canonical_url=canonical_url,
+                           base_url=base_url), 404
 
 @app.get('/sitemap.xml')
 async def sitemap():

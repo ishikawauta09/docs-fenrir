@@ -12,6 +12,35 @@ Happy coding! 🐺
 
 ---
 
+### v2.2.2 — Major Feature Update
+
+New middleware, session backends, pagination, and more:
+
+**New Middleware (`fenrir.middleware`)**
+- **CORSMiddleware**: Full CORS support for HTTP and WebSocket with configurable origins, methods, headers, credentials, and max-age.
+- **GZipMiddleware**: Automatic gzip compression for responses above a configurable size threshold.
+- **RequestIDMiddleware**: Auto-generates unique request IDs or forwards client-provided IDs via configurable header.
+- **RateLimitMiddleware**: Sliding-window rate limiter per client IP with configurable limits and block status code.
+
+**New Session Backends (`fenrir.sessions`)**
+- **InMemorySessionInterface**: In-memory session storage with TTL expiration, suitable for single-process apps and testing.
+- **RedisSessionInterface**: Redis-backed session storage with support for both sync (`fakeredis`) and async (`redis.asyncio`) clients. Install with `pip install fenrir-framework[redis]`.
+
+**New Pagination Utilities (`fenrir.pagination`)**
+- **PaginationParams**: Pydantic model for query parameters (`page`, `page_size`, `sort_by`, `sort_order`).
+- **paginate()**: Utility to paginate SQLAlchemy-style query results with metadata.
+- **paginate_dict()**: Utility to paginate lists of dictionaries.
+
+**New Features**
+- **WebSocket per-route timeout**: `@app.websocket("/ws", timeout=5.0)` raises `WebSocketTimeout` if no message received within the timeout.
+- **Multiple response models per status**: `response_models={200: SuccessModel, 404: ErrorModel}` applies different models based on the actual response status code.
+
+**Improvements**
+- ASGI middleware stack is now built once and cached, with automatic invalidation when new middleware is added.
+- Zero deprecation warnings across the entire test suite (528 tests).
+
+---
+
 ### v1.2.2 — Logo & Favicon Patch
 
 High-quality logo assets and resolved CLI template favicon issues:

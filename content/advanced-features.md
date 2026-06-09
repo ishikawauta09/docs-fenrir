@@ -72,6 +72,37 @@ async def get_item(item_id: int):
     return {"id": item_id, "name": "Item", "price": 9.99}
 ```
 
+### Multiple Response Models per Status
+
+Apply different response models based on the actual response status code:
+
+```python
+from pydantic import BaseModel
+
+class SuccessResponse(BaseModel):
+    id: int
+    name: str
+
+class ErrorResponse(BaseModel):
+    detail: str
+    code: int
+
+@app.get(
+    "/items/<item_id:int>",
+    response_models={
+        200: SuccessResponse,
+        404: ErrorResponse
+    }
+)
+async def get_item(item_id: int):
+    if item_id < 0:
+        return JSONResponse(
+            status_code=404,
+            content={"detail": "Item not found", "code": 404}
+        )
+    return {"id": item_id, "name": "Item"}
+```
+
 ### Event Listeners
 
 ```python
