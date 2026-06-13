@@ -6,6 +6,7 @@ const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('sidebarToggle');
 const overlay = document.getElementById('sidebarOverlay');
 const closeBtn = document.getElementById('closeSidebar');
+const rightSidebar = document.getElementById('rightSidebar');
 
 // Auto-collapse sidebar on mobile
 if (window.innerWidth <= 768) {
@@ -182,6 +183,15 @@ if (contentArea && scrollToTopBtn) {
         }
     });
 
+    // Reset scroll button position on resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1280 && rightSidebar && !rightSidebar.classList.contains('collapsed')) {
+            scrollToTopBtn.style.right = '300px';
+        } else {
+            scrollToTopBtn.style.right = '40px';
+        }
+    });
+
     scrollToTopBtn.addEventListener('click', () => {
         contentArea.scrollTo({
             top: 0,
@@ -315,7 +325,6 @@ document.addEventListener('click', (e) => {
 });
 
 // Toggle moreMenuDropdown (mobile) or rightSidebar (desktop)
-const rightSidebar = document.getElementById('rightSidebar');
 if (moreMenuBtn) {
     moreMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -326,6 +335,10 @@ if (moreMenuBtn) {
         } else {
             if (rightSidebar) {
                 rightSidebar.classList.toggle('collapsed');
+                // Reposition scroll-to-top button
+                if (scrollToTopBtn && window.innerWidth >= 1280) {
+                    scrollToTopBtn.style.right = rightSidebar.classList.contains('collapsed') ? '40px' : '300px';
+                }
             }
         }
     });

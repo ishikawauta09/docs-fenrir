@@ -1,6 +1,6 @@
 # Fenrir Web Framework
 
-Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri v2.2.2.
+Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri.
 
 ## Core Documentation
 - Introduction: /docs/introduction - Framework overview and architecture.
@@ -21,7 +21,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Error Handling: /docs/error-handling - Handling status codes and custom exceptions.
 - Error Handling Compatibility: /docs/error-handling-compatibility - Multi-style error handling compatibility.
 - Middleware: /docs/middleware - Request and response middleware hooks.
-- Middleware Classes: /docs/middleware-classes - CORS, GZip, RequestID, RateLimit middleware.
+- Middleware Classes: /docs/middleware-classes - CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF middleware.
 - Sessions: /docs/sessions - Secure cookie, in-memory, and Redis session backends.
 - Pagination: /docs/pagination - Paginated list responses.
 - Background Tasks: /docs/background-tasks - Running background workers.
@@ -31,6 +31,9 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Testing Guide: /docs/testing - Writing test cases with pytest and TestClient.
 - CLI Tools Reference: /docs/cli-tools - Run, inspect, and benchmark commands.
 - Advanced Features: /docs/advanced-features - WSGI mounting, compat modes, multiple response models.
+- Signals System: /docs/signals - Event-driven programming with signals.
+- JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
+- OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.
 - Best Practices: /docs/best-practices - Performance, security, type hints.
 - Conclusion: /docs/conclusion - Closing notes and changelog.
 
@@ -40,8 +43,11 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Falcon-style class-based resources and before/after hooks.
 - Sanic-style listener hooks, background tasks, and handlers.
 - Full WSGI application mounting support.
-- Built-in CORS, GZip, RequestID, and RateLimit ASGI middleware.
+- Built-in CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF ASGI middleware.
 - Session backends: secure cookies, in-memory, Redis.
 - Pagination utilities for list endpoints.
 - WebSocket per-route timeout support.
+- Signal system for event-driven programming.
+- Pluggable JSON serialization with tagged types.
+- Auto-generated OpenAPI 3.0.3 schema with Swagger UI and ReDoc.
 - Powered by high-speed Asteri ASGI server.

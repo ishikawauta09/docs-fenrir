@@ -22,3 +22,4 @@ pip install -e .
 - `asteri>=2.2.2`
 - `itsdangerous>=2.0.0`
 - `python-multipart>=0.0.18`
+- `typing_extensions>=4.0.0`

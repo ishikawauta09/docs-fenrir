@@ -2,7 +2,9 @@
 
 Fenrir provides the `@app.exception()` decorator to catch specific exceptions or HTTP status codes globally. This is useful for creating custom error pages and handling various error scenarios.
 
-### Basic HTTP Exceptions
+### Base HTTPException
+
+The base class for all HTTP exceptions. Accepts `status_code`, `detail`, and optional `headers`.
 
 ```python
 from fenrir import HTTPException
@@ -17,7 +19,32 @@ async def get_item(item_id: int):
     return {"item_id": item_id}
 ```
 
+The `headers` parameter allows passing custom response headers with the error:
+
+```python
+@app.get("/protected")
+async def protected_route():
+    raise HTTPException(
+        status_code=401,
+        detail="Authentication required",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+```
+
 ### Specific HTTP Exception Classes
+
+Fenrir provides pre-built exception classes with default status codes and detail messages. All accept an optional `detail` string and `headers` dict.
+
+| Class | Status Code | Default Detail |
+|-------|------------|----------------|
+| `HTTPBadRequest` | 400 | `"Bad Request"` |
+| `HTTPUnauthorized` | 401 | `"Unauthorized"` |
+| `HTTPForbidden` | 403 | `"Forbidden"` |
+| `HTTPNotFound` | 404 | `"Not Found"` |
+| `HTTPMethodNotAllowed` | 405 | `"Method Not Allowed"` |
+| `HTTPConflict` | 409 | `"Conflict"` |
+| `HTTPUnprocessableEntity` | 422 | `"Unprocessable Entity"` |
+| `HTTPInternalServerError` | 500 | `"Internal Server Error"` |
 
 ```python
 from fenrir import (
@@ -25,7 +52,9 @@ from fenrir import (
     HTTPUnauthorized,
     HTTPForbidden,
     HTTPNotFound,
+    HTTPMethodNotAllowed,
     HTTPConflict,
+    HTTPUnprocessableEntity,
     HTTPInternalServerError
 )
 
@@ -36,6 +65,42 @@ async def get_user(user_id: int):
     if user_id > 999999:
         raise HTTPNotFound(detail="User not found")
     return {"user_id": user_id}
+```
+
+#### Using Headers with Specific Exceptions
+
+Each exception class supports the `headers` parameter for custom response headers:
+
+```python
+@app.get("/auth/token")
+async def get_token():
+    token = "..."
+    if not token:
+        raise HTTPUnauthorized(
+            detail="Missing credentials",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return {"token": token}
+
+@app.get("/users/<user_id:int>/profile")
+async def get_profile(user_id: int):
+    user = None
+    if not user:
+        raise HTTPForbidden(
+            detail="You do not have access to this resource",
+            headers={"X-RateLimit-Remaining": "0"}
+        )
+    return {"profile": user}
+
+@app.post("/resources")
+async def create_resource():
+    conflict = True
+    if conflict:
+        raise HTTPConflict(
+            detail="Resource already exists",
+            headers={"Location": "/resources/123"}
+        )
+    return {"created": True}
 ```
 
 ### Catching HTTP Status Code (Customize 404 Page)
@@ -197,6 +262,30 @@ async def demo_error():
 
 ### Multiple Exception Handlers
 
+#### Using `@app.exception()` with Multiple Exceptions
+
+The `@app.exception()` decorator accepts multiple exception classes or status codes in a single call, mapping them all to the same handler:
+
+```python
+@app.exception(400, 422)
+async def handle_bad_request(req, exc):
+    return JSONResponse(
+        {"error": "Invalid request", "detail": exc.detail},
+        status=getattr(exc, "status_code", 400)
+    )
+
+@app.exception(HTTPNotFound, HTTPMethodNotAllowed)
+async def handle_not_found(req, exc):
+    return JSONResponse(
+        {"error": "Resource not available"},
+        status=exc.status_code
+    )
+```
+
+#### Registering Separate Handlers
+
+You can register individual handlers using `@app.exception()` for each exception class:
+
 ```python
 class DatabaseError(Exception):
     pass
@@ -225,4 +314,48 @@ async def get_data():
         raise DatabaseError("Database connection failed")
     except DatabaseError as e:
         raise  # Will be caught by handler
+```
+
+#### Using `app.register_error_handler()`
+
+As an alternative to the decorator, you can register handlers programmatically using `app.register_error_handler()`:
+
+```python
+async def handle_validation(req, exc):
+    return JSONResponse(
+        {"error": "Validation failed", "detail": exc.detail},
+        status=422
+    )
+
+async def handle_rate_limit(req, exc):
+    return JSONResponse(
+        {"error": "Rate limit exceeded"},
+        status=429,
+        headers={"Retry-After": "60"}
+    )
+
+app.register_error_handler(422, handle_validation)
+app.register_error_handler(HTTPConflict, handle_rate_limit)
+```
+
+### Exception Handler Resolution Order
+
+When an exception is raised, Fenrir resolves the handler in the following order:
+
+1. **Status code handler first** — If a handler is registered for the exception's `status_code` attribute, it is used. For example, if an `HTTPNotFound` (status 404) is raised, Fenrir checks for a handler registered on `404` before checking for `HTTPNotFound`.
+
+2. **Exception class handler second** — If no status code handler is found, Fenrir walks the exception handlers dict looking for a registered exception class that matches via `isinstance`.
+
+3. **Default fallback** — If no custom handler matches, `HTTPException` subclasses return `{"detail": "<detail>"}` with their status code. Any other unhandled exception returns `{"detail": "Internal Server Error"}` with status 500.
+
+```python
+# Status code 404 is checked before HTTPNotFound class
+@app.exception(404)
+async def handle_404(req, exc):
+    return JSONResponse({"error": "Page not found"}, status=404)
+
+@app.exception(HTTPNotFound)
+async def handle_http_not_found(req, exc):
+    # This handler is only reached if no 404 status code handler exists
+    return JSONResponse({"error": "Not found"}, status=404)
 ```
